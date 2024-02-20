@@ -59,24 +59,23 @@ overall_settings(
 #)
 
 include(build_sketch)
-build_sketch(TARGET "flash_led"
-  SOURCES
-  flash_led.cpp
-  SWDSerial.cpp
-  CommandParser.cpp
-)
+#build_sketch(TARGET "flash_led"
+#  SOURCES
+#  flash_led.cpp
+#  SWDSerial.cpp
+#)
 
 # Optional features
 # -----------------------------------------------------------------------------
 
-include(insights)
-insights(TARGET "flash_led"
+#include(insights)
+#insights(TARGET "flash_led"
   # DIRECT_INCLUDES
   # TRANSITIVE_INCLUDES
   # SYMBOLS
   # ARCHIVES
   # LOGIC_STRUCTURE
-)
+#)
 
 #
 # Tests
@@ -85,3 +84,10 @@ insights(TARGET "flash_led"
 #  SOURCES
 #  test_serial.cpp
 #)
+
+build_sketch(TARGET "test_command"
+  SOURCES
+  test_command.cpp
+  SWDSerial.cpp
+  CommandParser.cpp
+  )

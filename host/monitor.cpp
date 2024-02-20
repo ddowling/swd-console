@@ -9,6 +9,7 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 
 #define SWDSERIAL_MAGIC 0xd5715e0d
 
@@ -142,10 +143,10 @@ int main(int argc, char **argv)
         {
             uint8_t buffer[256];
             int pos = 0;
-            // Write to the head and read from the tail
+            // Writes go to the head and reads from the tail
             if (out_head > out_tail)
             {
-                if (!stlink.read(buffer, out_buffer_addr + out_tail,
+                if (!stlink.read(buffer, out_buffer_addr + out_tail + 1,
                                  out_head - out_tail))
                     break;
                 
@@ -155,8 +156,11 @@ int main(int argc, char **argv)
             {
                 // Buffer wrap around
                 // Read from the buffer before wrap around
-                stlink.read(buffer, out_buffer_addr + out_tail, 256 - out_tail);
-                pos = 256 - out_tail;
+                if (out_tail < 255)
+                    stlink.read(buffer, out_buffer_addr + out_tail + 1,
+                                255 - out_tail);
+                pos = 255 - out_tail;
+                
 
                 // Read rest
                 if (out_head != 0)
@@ -166,7 +170,6 @@ int main(int argc, char **argv)
                     
                     pos += out_head;
                 }
-                
             }
 
             // Update the tail pointer to empty the buffer
@@ -175,24 +178,7 @@ int main(int argc, char **argv)
             if (!stlink.write(&out_tail, status_addr + 1, 1))
                 break;
 
-            std::string s((char *)buffer, pos);
-
-            if (true)
-            {
-                std::string decoded_string;
-                for (char c : s)
-                {
-                    // Think this signals a reboot?
-                    if (c == '\0')
-                        printf("\n(reboot)\n");
-                    else if (c < 0x20 && c != '\r' && c != '\n')
-                        printf("\\x%02x", c);
-                    else
-                        printf("%c", c);
-                }
-            }
-            else
-                printf("%s", s.c_str());
+            write(STDOUT_FILENO, buffer, pos);
 
             active = true;
         }
