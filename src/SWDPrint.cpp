@@ -1,50 +1,19 @@
-#include "SWDSerial.h"
+#include "SWDPrint.h"
 
-SWDSerial::SWDSerial()
-    : magic(SWDSERIAL_MAGIC),
+SWDPrint::SWDPrint()
+    : magic(SWDPRINT_MAGIC),
       outHead(0),
-      outTail(0),
-      inHead(0),
-      inTail(0)
+      outTail(0)
 {
-}
-
-// Stream overrides
-int SWDSerial::available()
-{
-    return (inHead - inTail) % sizeof(inBuffer);
-}
-
-int SWDSerial::read()
-{
-    if (inHead == inTail)
-        return -1;
-
-    uint8_t next = inTail + 1;
-    if (next >= sizeof(inBuffer))
-        next = 0;
-    
-    uint8_t res = inBuffer[next];
-    inTail = next;
-    
-    return res;
-}
-
-int SWDSerial::peek()
-{
-    if (inHead == inTail)
-        return -1;
-    else
-        return inBuffer[inTail];
 }
 
 // Print overrides
-size_t SWDSerial::write(uint8_t c)
+size_t SWDPrint::write(uint8_t c)
 {
     return write(&c, 1);
 }
 
-size_t SWDSerial::write(const uint8_t *buffer, size_t size)
+size_t SWDPrint::write(const uint8_t *buffer, size_t size)
 {
     size_t i;
     for (i = 0; i < size; i++)
@@ -73,7 +42,7 @@ size_t SWDSerial::write(const uint8_t *buffer, size_t size)
     return i;
 }
 
-int SWDSerial::availableForWrite()
+int SWDPrint::availableForWrite()
 {
 #if 1
     return sizeof(outBuffer);

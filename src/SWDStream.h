@@ -4,10 +4,10 @@
 
 #define SWDSERIAL_MAGIC 0xd5715e0d
 
-class SWDSerial : public Stream
+class SWDStream : public Stream
 {
 public:
-    SWDSerial();
+    SWDStream();
 
     // Stream overrides
     virtual int available();

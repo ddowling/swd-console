@@ -1,3 +1,8 @@
+cmake_minimum_required(VERSION 3.22)
+
+project(swd-monitor)
+
+add_subdirectory(cxxopts)
 
 find_package(PkgConfig REQUIRED)
 
@@ -16,6 +21,7 @@ add_executable(monitor
 
 target_link_libraries(monitor
   /usr/local/lib/libstlink.a
-  ${LIBUSB_LIBRARIES})
+  ${LIBUSB_LIBRARIES}
+  cxxopts)
 
 

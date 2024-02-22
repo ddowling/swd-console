@@ -11,7 +11,8 @@
 #include <string>
 #include <iostream>
 
-#define SWDSERIAL_MAGIC 0xd5715e0d
+#define SWDPRINT_MAGIC  0xd5715e0c
+#define SWDSTREAM_MAGIC 0xd5715e0d
 
 static volatile bool running = true;
 
@@ -49,10 +50,11 @@ int main(int argc, char **argv)
             return 1;
         }
 
-        uint32_t magic = SWDSERIAL_MAGIC;
+	// FIXME Need to addd SWDPRINT_MAGIC
+        uint32_t magic = SWDSTREAM_MAGIC;
         uint8_t *magic_ptr = (uint8_t *)&magic;
         
-        printf("Looking for SWDSERIAL_MAGIC\n");
+        printf("Looking for SWD magic numbers in memory\n");
         for (size_t i = 0; i < ram_size-3; i+=4)
         {
             if (ram[i] == magic_ptr[0] &&
@@ -67,12 +69,12 @@ int main(int argc, char **argv)
 
         if (addr == 0)
         {
-            printf("Did not find the SWDSERIAL_MAGIC number\n");
+            printf("Did not find any SWD magic numbers in memory\n");
             
             return 1;
         }
 
-        printf("Found SWDSERIAL_MAGIC number at 0x%zx\n", addr);
+        printf("Found SWDSTREAM_MAGIC number at 0x%zx\n", addr);
     }
 
     struct termios orig_tty;

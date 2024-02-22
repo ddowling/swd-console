@@ -1,7 +1,7 @@
 #include <Arduino.h>
-#include "SWDSerial.h"
+#include "SWDStream.h"
 
-SWDSerial logger;
+SWDStream logger;
 
 uint32_t counter;
 

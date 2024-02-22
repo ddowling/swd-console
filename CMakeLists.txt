@@ -8,7 +8,9 @@ file(REAL_PATH "~/Arduino/libraries" USER_LIBS EXPAND_TILDE)
 file(TO_CMAKE_PATH "${USER_LIBS}" USER_LIBS)
 
 # Setup the cmake module path and toolchain
-list(APPEND CMAKE_MODULE_PATH ${CORE_PATH}/cmake)
+# FIXME Testing cmake fixes
+#list(APPEND CMAKE_MODULE_PATH ${CORE_PATH}/cmake)
+list(APPEND CMAKE_MODULE_PATH /home/dpd/opsol_projects/Arduino_Core_STM32/cmake)
 set(CMAKE_TOOLCHAIN_FILE toolchain)
 
 # You may remove this block when using this file as the sketch's CMakeLists.txt
@@ -18,7 +20,7 @@ if (NOT ${CMAKE_PARENT_LIST_FILE} STREQUAL ${CMAKE_CURRENT_LIST_FILE})
     return()
 endif()
 
-project("firmware")
+project("swd-console")
 
 include(set_board)
 
@@ -28,9 +30,8 @@ include(set_board)
 # XUSB FS / HS / HSFS
 # VIRTIO disable / generic / enabled
 # BOOTLOADER dfuo / dfu2 / hid
-
 set_board("BLUEPILL_F103CB"
-  USB CDCgen
+  USB none
 )
 
 include(overall_settings)
@@ -48,46 +49,20 @@ overall_settings(
   # CORE_CALLBACK
 )
 
-# FIXME Needed to run following to get the Wire dependancy to stick in the
-# CMakeLists.txt file for the PCF8574 library?
-# python3 ~/.arduino15/packages/STMicroelectronics/hardware/stm32/2.7.1/cmake/scripts/cmake_libs.py  --library ~/Arduino/libraries/PCF8574/ --depends Wire
-
-#include(external_library)
-#external_library(PATH "${USER_LIBS}/PCF8574"
-#  DEPENDS
-#    Wire
-#)
+include_directories(src)
 
 include(build_sketch)
-#build_sketch(TARGET "flash_led"
-#  SOURCES
-#  flash_led.cpp
-#  SWDSerial.cpp
-#)
-
-# Optional features
-# -----------------------------------------------------------------------------
-
-#include(insights)
-#insights(TARGET "flash_led"
-  # DIRECT_INCLUDES
-  # TRANSITIVE_INCLUDES
-  # SYMBOLS
-  # ARCHIVES
-  # LOGIC_STRUCTURE
-#)
-
-#
-# Tests
-
-#build_sketch(TARGET "test_serial"
-#  SOURCES
-#  test_serial.cpp
-#)
-
-build_sketch(TARGET "test_command"
+build_sketch(TARGET flash_led
   SOURCES
-  test_command.cpp
-  SWDSerial.cpp
-  CommandParser.cpp
-  )
+  examples/flash_led/flash_led.ino
+  examples/flash_led/flash_led.cpp
+  src/SWDStream.cpp src/SWDStream.h
+)
+
+build_sketch(TARGET test_command
+  SOURCES
+  examples/test_command/test_command.ino
+  examples/test_command/test_command.cpp
+  src/SWDStream.cpp src/SWDStream.h
+  src/CommandParser.cpp src/CommandParser.h
+)
